@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Public Static Site (Accessed via Cloudflare Tunnel)
+  # The tunnel points directly to this container - no host port needed.
+  # To expose directly (e.g. for testing): uncomment the ports section below.
+  web-public:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: link-stacker-web
+    restart: unless-stopped
+    # ports:
+    #   - "3000:80"  # Uncomment to test locally at http://localhost:3000
+    volumes:
+      # Mount data folder so nginx can serve /data/config.json to the public page
+      - stacker-data:/usr/share/nginx/html/data:ro
+
+  # Admin Backend (Accessed via VPN / Nginx Proxy Manager)
+  # Exposes port 8080 on localhost only — adjust IP to your VPN interface if needed.
+  admin-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.admin
+    container_name: link-stacker-admin
+    restart: unless-stopped
+    environment:
+      # Change PORT here if 8080 conflicts with another service (no rebuild needed)
+      - PORT=8080
+    ports:
+      # Change 127.0.0.1 to your VPN interface IP (e.g., 10.8.0.1) to allow NPM access
+      - "127.0.0.1:8080:8080"
+    volumes:
+      # Shared named volume — admin writes config.json, web-public reads it
+      - stacker-data:/app/data:rw
+
+volumes:
+  # Named volume persists link data (config.json, config.private.json, uploads/)
+  stacker-data:

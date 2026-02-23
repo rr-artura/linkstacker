@@ -1,0 +1,98 @@
+{
+  "settings": {
+    "siteTitle": "Link SMK SIG",
+    "favicon": "/uploads/upload-1771834208632-620575727.png",
+    "background": {
+      "type": "preset",
+      "value": "warm-flame"
+    },
+    "footer": {
+      "text": "Powered by RH",
+      "url": "",
+      "color": "#ffffff"
+    }
+  },
+  "items": [
+    {
+      "id": "item-prof-1",
+      "type": "profile",
+      "url": "/uploads/upload-1771823839178-952683231.png",
+      "style": "frameless",
+      "bgColor": "#116fe8",
+      "bannerColor": "#ffffff",
+      "bannerOpacity": 0
+    },
+    {
+      "id": "item-1",
+      "type": "text",
+      "content": "Welcome to my links!",
+      "style": "heading",
+      "textAlign": "center"
+    },
+    {
+      "id": "item-2",
+      "type": "link",
+      "title": "My Portfolio",
+      "url": "https://example.com/portfolio",
+      "icon": "fas fa-briefcase",
+      "animation": "",
+      "description": "Check out my work",
+      "titleBold": true,
+      "titleAlign": "center",
+      "descAlign": "center",
+      "descBold": true,
+      "descColor": "#ffffff"
+    },
+    {
+      "id": "item-4",
+      "type": "link",
+      "title": "GitHub",
+      "url": "https://github.com",
+      "icon": "fab fa-github",
+      "animation": "shake",
+      "description": ""
+    },
+    {
+      "id": "item-1771823039696",
+      "type": "divider",
+      "style": "double",
+      "color": "#e2e8f0",
+      "thickness": "5"
+    },
+    {
+      "id": "item-1771772556852",
+      "type": "link",
+      "title": "tes",
+      "icon": "",
+      "description": "ayam goreng",
+      "animation": "bounce",
+      "isProtected": true,
+      "encryptedData": "U2FsdGVkX1+OjiCBIJJW2rS6y3CbXztrF8jDpApTtwUYAz5b2e427xMSD5J8B7qf"
+    },
+    {
+      "id": "item-1771819873247",
+      "type": "folder",
+      "title": "New Folder",
+      "icon": "fas fa-folder",
+      "items": [
+        {
+          "id": "item-1771823006741",
+          "type": "link",
+          "title": "New Link",
+          "url": "https://",
+          "icon": "fas fa-link"
+        },
+        {
+          "id": "item-1771823187091",
+          "type": "link",
+          "title": "New Link",
+          "url": "https://",
+          "icon": "fas fa-link"
+        }
+      ],
+      "isProtected": false,
+      "password": "ayowes",
+      "descBold": false
+    }
+  ]
+}

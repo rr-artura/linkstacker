@@ -1,0 +1,8 @@
+# Dockerfile.nginx
+FROM nginx:alpine
+
+# Copy static frontend files to Nginx default html folder
+COPY ./public /usr/share/nginx/html
+
+# We don't copy the data folder here directly, 
+# it will be mounted as a volume so both Nginx and Admin can access the live links.json

@@ -1,0 +1,16 @@
+# Dockerfile.admin
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY ./admin/package.json ./admin/package-lock.json* ./admin/
+RUN cd admin && npm install --production
+
+# Copy application files
+COPY ./admin ./admin
+
+# Data folder will be mounted via volume
+EXPOSE 8080
+
+CMD ["node", "admin/server.js"]

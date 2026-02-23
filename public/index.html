@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Links</title>
+    <!-- Dynamic Favicon injection via JS -->
+    <link id="dynamic-favicon" rel="icon" type="image/png" href="">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style id="dynamic-styles"></style>
+    <!-- Crypto JS for decrypting protected links -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+</head>
+
+<body id="dynamic-body">
+    <!-- Preset Background blobs (shown if type=preset) -->
+    <div id="bg-preset" class="background-animation" style="display:none;">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="container" id="main-container">
+        <!-- Components and slider wrappers are injected here -->
+        <div class="slider-wrapper">
+            <main class="links-container" id="links-container">
+                <!-- Loading skeleton -->
+                <div class="link-item skeleton"></div>
+                <div class="link-item skeleton"></div>
+                <div class="link-item skeleton"></div>
+            </main>
+        </div>
+
+        <footer>
+            <a href="#" class="footer-branding" id="footer-branding"></a>
+        </footer>
+    </div>
+
+    <!-- Password Prompt Modal -->
+    <div id="password-modal" class="pwd-modal hidden">
+        <div class="pwd-content">
+            <i class="fas fa-lock fa-2x" style="color: #f59e0b; margin-bottom: 1rem;"></i>
+            <h3 style="margin-bottom:0.5rem; color:var(--text-primary)">Protected Content</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">This area is locked. Please
+                enter the password to decrypt it.</p>
+            <input type="password" id="unlock-pwd" class="pwd-input" placeholder="Enter password...">
+            <div style="display:flex; justify-content:stretch; gap: 0.5rem; margin-top: 1rem;">
+                <button class="pwd-btn cancel" id="pwd-cancel">Cancel</button>
+                <button class="pwd-btn submit" id="pwd-submit">Unlock</button>
+            </div>
+            <div id="pwd-error" style="color:#ef4444; font-size:0.8rem; margin-top:0.5rem; display:none;">Incorrect
+                password!</div>
+        </div>
+    </div>
+
+    <!-- Error container injected by JS if needed -->
+
+    <!-- Crypto JS for decrypting protected links -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

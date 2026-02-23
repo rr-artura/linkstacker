@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Stacker Admin - Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="logo">
+                <i class="fas fa-layer-group"></i> Link Stacker <span class="badge">Admin</span>
+            </div>
+            <div class="header-actions">
+                <button id="save-btn" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-target="tab-items"><i class="fas fa-list"></i> Structure &
+                Links</button>
+            <button class="tab-btn" data-target="tab-settings"><i class="fas fa-cog"></i> Global Settings</button>
+        </div>
+
+        <div class="tab-content active" id="tab-items">
+            <!-- Center column layout for items -->
+            <div class="centered-layout">
+                <p class="subtitle" style="text-align: center;">Drag and Drop components to rearrange them. Click on a
+                    component to edit its content.</p>
+
+                <button class="btn btn-add-component" id="btn-open-add-modal">
+                    <i class="fas fa-plus"></i> Add new component
+                </button>
+
+                <div id="admin-links-container" class="admin-links-list">
+                    <!-- Inline editable components will render here -->
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content hidden" id="tab-settings">
+            <div class="centered-layout">
+                <div class="panel">
+                    <h2><i class="fas fa-globe"></i> Global Website Settings</h2>
+                    <form id="settings-form" style="margin-top: 1rem;">
+                        <div class="form-group">
+                            <label>Site Title</label>
+                            <input type="text" id="set-title">
+                        </div>
+                        <div class="form-group">
+                            <label>Favicon URL or Upload</label>
+                            <div class="upload-flex">
+                                <input type="text" id="set-favicon" placeholder="https://..." style="flex:1;">
+                                <input type="file" id="favicon-file" accept="image/*" style="display:none;">
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="document.getElementById('favicon-file').click()">
+                                    <i class="fas fa-upload"></i> Upload
+                                </button>
+                            </div>
+                        </div>
+
+                        <hr class="form-hr">
+
+                        <h3>Background Theme</h3>
+                        <div class="form-group">
+                            <label>Background Type</label>
+                            <select id="set-bg-type" class="form-select">
+                                <option value="preset">Preset Animation (Blobs/Gradients)</option>
+                                <option value="color">Solid CSS Color</option>
+                                <option value="gradient">Custom Gradient</option>
+                                <option value="url">Image URL / Upload Image</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="set-bg-color-wrap" style="display:none;">
+                            <label>Solid Background Color</label>
+                            <input type="color" id="set-bg-color-val" value="#0f172a"
+                                style="width: 100px; height: 50px;">
+                        </div>
+                        <div class="form-group" id="set-bg-gradient-wrap" style="display:none;">
+                            <label>Gradient Colors (Top to Bottom)</label>
+                            <div style="display:flex; gap:10px;">
+                                <input type="color" id="set-bg-grad1" value="#3b82f6"
+                                    style="width: 100px; height: 50px;">
+                                <input type="color" id="set-bg-grad2" value="#8b5cf6"
+                                    style="width: 100px; height: 50px;">
+                            </div>
+                        </div>
+                        <div class="form-group" id="set-bg-url-wrap" style="display:none;">
+                            <label>Background Image URL</label>
+                            <input type="text" id="set-bg-url-val" placeholder="https://...">
+                        </div>
+
+                        <div class="form-group" id="preset-grid-wrap" style="display:none;">
+                            <label>Select a Preset Theme</label>
+                            <div class="bg-preset-grid" id="bg-preset-grid">
+                                <div class="bg-preset-item" data-preset="blob-animation"
+                                    style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);"
+                                    title="Blob Gradient"></div>
+                                <div class="bg-preset-item" data-preset="dark-waves"
+                                    style="background: #0f172a; border-bottom: 5px solid #3b82f6;" title="Dark Waves">
+                                </div>
+                                <div class="bg-preset-item" data-preset="sunset-glow"
+                                    style="background: linear-gradient(to right, #ff7e5f, #feb47b);"
+                                    title="Sunset Glow"></div>
+                                <div class="bg-preset-item" data-preset="northern-star"
+                                    style="background: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);"
+                                    title="Northern Star"></div>
+                                <div class="bg-preset-item" data-preset="purple-haze"
+                                    style="background: linear-gradient(to top, #c471f5 0%, #fa71cd 100%);"
+                                    title="Purple Haze"></div>
+                                <div class="bg-preset-item" data-preset="midnight-city"
+                                    style="background: linear-gradient(to top, #209cff 0%, #68e0cf 100%);"
+                                    title="Midnight City"></div>
+                                <div class="bg-preset-item" data-preset="warm-flame"
+                                    style="background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);"
+                                    title="Warm Flame"></div>
+                                <div class="bg-preset-item" data-preset="clean-glass"
+                                    style="background: #f8fafc; border: 1px solid #e2e8f0; color:#0f172a; text-align:center; line-height:56px;font-size:0.8rem;"
+                                    title="Clean Glass">Glass</div>
+                                <div class="bg-preset-item" data-preset="hacker-terminal"
+                                    style="background: #000; border: 1px solid #10b981;" title="Terminal"></div>
+                                <div class="bg-preset-item" data-preset="cherry-blossom"
+                                    style="background: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);"
+                                    title="Cherry Blossom"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="set-bg-upload-wrap">
+                            <label>Or Upload Custom Background</label>
+                            <div class="upload-flex">
+                                <input type="file" id="set-bg-file" accept="image/*">
+                                <button type="button" class="btn btn-secondary" id="btn-upload-bg">Upload</button>
+                            </div>
+                        </div>
+
+                        <hr class="form-hr">
+
+                        <h3>Footer Options</h3>
+                        <div class="form-group">
+                            <label>Powered By Text</label>
+                            <input type="text" id="set-footer-text" placeholder="Powered by Link Stacker">
+                        </div>
+                        <div class="form-group">
+                            <label>Footer URL (Optional)</label>
+                            <input type="url" id="set-footer-url" placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label>Footer Text Color</label>
+                            <input type="color" id="set-footer-color" value="#64748b"
+                                style="width: 100px; height: 50px;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Components Modal -->
+    <div id="add-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-magic"></i> Add new component</h3>
+                <button class="btn-close" id="btn-close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body component-grid">
+                <!-- Profile -->
+                <div class="component-card" data-type="profile">
+                    <i class="fas fa-user-circle fa-2x"></i>
+                    <h4>Profile</h4>
+                    <p>Contains profile image / avatar</p>
+                </div>
+                <!-- Link -->
+                <div class="component-card" data-type="link">
+                    <i class="fas fa-link fa-2x"></i>
+                    <h4>Link</h4>
+                    <p>A button that redirects to a URL</p>
+                </div>
+                <!-- Text -->
+                <div class="component-card" data-type="text">
+                    <i class="fas fa-align-left fa-2x"></i>
+                    <h4>Text Block</h4>
+                    <p>Styled text for headings or descriptions</p>
+                </div>
+                <!-- Divider -->
+                <div class="component-card" data-type="divider">
+                    <i class="fas fa-minus fa-2x"></i>
+                    <h4>Divider</h4>
+                    <p>Create blank space or a horizontal line</p>
+                </div>
+                <!-- Folder -->
+                <div class="component-card" data-type="folder">
+                    <i class="fas fa-folder fa-2x"></i>
+                    <h4>Folder</h4>
+                    <p>Sub-page to categorize and group other links securely</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Icon Picker Modal -->
+    <div id="icon-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-icons"></i> Choose an Icon</h3>
+                <button class="btn-close" id="btn-close-icon-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="icon-search" placeholder="Search icons... (e.g. envelope, github, music)">
+            </div>
+            <div class="icon-grid" id="icon-grid">
+                <!-- Icons generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Folder Contents Modal -->
+    <div id="folder-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 700px; height: 90vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-open"></i> Folder Contents</h3>
+                <button class="btn-close" id="btn-close-folder-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="flex-grow: 1; overflow-y: auto; padding-right: 10px;">
+                <div id="folder-links-container" class="admin-links-list" style="margin-bottom: 20px;">
+                    <!-- Nested components render here -->
+                </div>
+                <button class="btn btn-add-component" id="btn-folder-add" style="margin-bottom: 10px;">
+                    <i class="fas fa-plus"></i> Add component to folder
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
