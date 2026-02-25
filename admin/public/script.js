@@ -317,9 +317,10 @@ function addNewItem(type, folderIndex = null) {
     targetArr.push(base);
 
     const containerId = folderIndex !== null ? 'folder-links-container' : 'admin-links-container';
+    const pfxVal = folderIndex !== null ? 'f' : 'm';
     renderItems(targetArr, containerId, folderIndex !== null);
 
-    setTimeout(() => toggleItem(targetArr.length - 1), 50);
+    setTimeout(() => toggleItem(targetArr.length - 1, pfxVal), 50);
 }
 
 window.deleteItem = function (index, e, isFolderCtx) {
@@ -407,7 +408,7 @@ window.duplicateItem = function (index, e, isFolderCtx) {
                 // Insert right after original on main page
                 config.items.splice(index + 1, 0, clone);
                 renderItems(config.items, 'admin-links-container', false);
-                setTimeout(() => toggleItem(index + 1), 50);
+                setTimeout(() => toggleItem(index + 1, 'm'), 50);
             }
         } else {
             // dest = "folder:<realIndex>"
@@ -418,7 +419,7 @@ window.duplicateItem = function (index, e, isFolderCtx) {
                 // Same folder: insert right after
                 config.items[targetFolderIndex].items.splice(index + 1, 0, clone);
                 renderItems(config.items[targetFolderIndex].items, 'folder-links-container', true);
-                setTimeout(() => toggleItem(index + 1), 50);
+                setTimeout(() => toggleItem(index + 1, 'f'), 50);
             } else {
                 // Different folder: append
                 config.items[targetFolderIndex].items.push(clone);
@@ -433,8 +434,9 @@ window.duplicateItem = function (index, e, isFolderCtx) {
 
 
 
-window.toggleItem = function (index) {
-    const acc = document.getElementById(`item-acc-${index}`);
+window.toggleItem = function (index, prefix) {
+    const p = prefix || 'm';
+    const acc = document.getElementById(`${p}-item-acc-${index}`);
     if (acc) acc.classList.toggle('expanded');
 }
 
@@ -450,7 +452,7 @@ window.bindToggleData = function (index, key, checkbox, isFolderCtx = false) {
     // Refresh to show/hide password fields if needed
     const containerId = isFolderCtx ? 'folder-links-container' : 'admin-links-container';
     renderItems(targetArr, containerId, isFolderCtx);
-    setTimeout(() => toggleItem(index), 10); // Keep expanded
+    setTimeout(() => toggleItem(index, isFolderCtx ? 'f' : 'm'), 10); // Keep expanded
 }
 
 window.openFolderManage = function (index, e) {
@@ -476,10 +478,14 @@ function renderItems(itemsArr, containerId, isFolderCtx) {
     itemsArr.forEach((item, index) => {
         const acc = document.createElement('div');
         acc.className = 'item-accordion';
-        acc.id = `item-acc-${index}`;
+        // Use namespaced IDs to avoid collisions between main list and folder list
+        const accPrefix = isFolderCtx ? 'f' : 'm';
+        acc.id = `${accPrefix}-item-acc-${index}`;
 
         // Context str for eval
         const ctxStr = isFolderCtx ? 'true' : 'false';
+        // Quoted prefix string for use inside onclick strings
+        const pfx = `'${accPrefix}'`;
 
         let iconHtml = ''; let titleTxt = ''; let subTxt = '';
 
@@ -526,7 +532,7 @@ function renderItems(itemsArr, containerId, isFolderCtx) {
                         <label>Upload Photo</label>
                         <div class="upload-flex">
                             <input type="file" id="prof-file-${index}" accept="image/*">
-                            <button type="button" class="btn btn-secondary" onclick="uploadFile('prof-file-${index}', 'null', (url) => { bindData(${index}, 'url', url, ${ctxStr}); renderItems(${ctxStr} ? config.items[currentFolderIndex].items : config.items, '${containerId}', ${ctxStr}); setTimeout(()=>toggleItem(${index}), 10); })">Upload</button>
+                            <button type="button" class="btn btn-secondary" onclick="uploadFile('prof-file-${index}', 'null', (url) => { bindData(${index}, 'url', url, ${ctxStr}); renderItems(${ctxStr} ? config.items[currentFolderIndex].items : config.items, '${containerId}', ${ctxStr}); setTimeout(()=>toggleItem(${index},${pfx}), 10); })">Upload</button>
                         </div>
                     </div>
                 </div>
@@ -708,7 +714,7 @@ function renderItems(itemsArr, containerId, isFolderCtx) {
                                 onclick="bindData(${index},'descAlign','center',${ctxStr});renderItems(${ctxStr}?config.items[currentFolderIndex].items:config.items,'${containerId}',${ctxStr});setTimeout(()=>toggleItem(${index}),10);">
                                 <i class="fas fa-align-center"></i></button>
                             <button type="button" class="editor-btn ${item.descAlign === 'right' ? 'active' : ''}"
-                                onclick="bindData(${index},'descAlign','right',${ctxStr});renderItems(${ctxStr}?config.items[currentFolderIndex].items:config.items,'${containerId}',${ctxStr});setTimeout(()=>toggleItem(${index}),10);">
+                                onclick="bindData(${index},'descAlign','right',${ctxStr});renderItems(${ctxStr}?config.items[currentFolderIndex].items:config.items,'${containerId}',${ctxStr});setTimeout(()=>toggleItem(${index},${pfx}),10);">
                                 <i class="fas fa-align-right"></i></button>
                             <input type="color" value="${item.descColor || '#64748b'}" title="Description Text Color"
                                 oninput="bindData(${index},'descColor',this.value,${ctxStr})" style="width:36px;height:32px;">
@@ -859,7 +865,7 @@ function renderItems(itemsArr, containerId, isFolderCtx) {
         }
 
         acc.innerHTML = `
-                    <div class="item-header" onclick="toggleItem(${index})">
+                    <div class="item-header" onclick="toggleItem(${index},${pfx})">
                         <div class="item-drag-handle"><i class="fas fa-grip-vertical"></i></div>
                         <div class="item-preview">
                             <div class="item-preview-icon">${iconHtml}</div>
