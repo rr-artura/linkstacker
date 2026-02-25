@@ -1,6 +1,6 @@
 # 🔗 Link Stacker
 
-**Link Stacker** adalah aplikasi *link-in-bio* self-hosted — alternatif open-source dari layanan seperti [s.id](https://s.id), [Linktree](https://linktr.ee), dan [Bento](https://bento.me) — yang berjalan sepenuhnya di server sendiri.
+**Link Stacker** adalah aplikasi *link-in-bio* self-hosted — alternatif open-source dari layanan seperti [s.id](https://s.id), [Linktree](https://linktr.ee), dan [Bento](https://bento.me).
 
 ![Preview](https://placehold.co/800x400/1e293b/94a3b8?text=Link+Stacker+Preview)
 
@@ -8,16 +8,13 @@
 
 ## ✨ Fitur Utama
 
-- 🎨 **Admin Panel** berbasis web untuk mengelola semua konten
-- 🔗 **Link, Folder, Text Block, Divider** — komponen yang bisa disusun bebas
-- 🖼️ **Profile Banner** — warna, opasitas, gambar, dan mode fit (fill/contain/tile)
-- 💬 **Text Shadow** — kontrol warna, opasitas, dan arah bayangan untuk semua teks
-- 📁 **Folder terproteksi** — enkripsi AES-256 per item atau per folder
-- 🧩 **Duplicate item** — salin ke halaman utama atau ke folder mana saja
-- 📤 **Upload gambar** langsung dari admin panel
-- 🌈 **Tema background** — preset animasi blob, solid color, gradient, atau gambar
-- 🔒 **Password protection** — konten dienkripsi AES-256, aman di server
-- 🐳 **Docker-ready** — deploy dalam hitungan menit
+- 🎨 **Isolated Admin Panel**
+- 🔗 **Link, Folder, Text Block, Divider**
+- 🖼️ **Profile Banner**
+- 📁 **Link terproteksi**
+- 🧩 **Duplicate item**
+- 🌈 **Tema background**
+- 🐳 **Docker-ready**
 
 ---
 
@@ -27,12 +24,8 @@
 |---|:---:|:---:|:---:|
 | Self-hosted / data milik sendiri | ✅ | ❌ | ❌ |
 | Biaya bulanan | Gratis | Gratis* | ~Rp 50rb/bln |
-| Tampilan kustom penuh | ✅ | Terbatas | Sebagian |
-| Proteksi konten (password) | ✅ AES-256 | ❌ | ✅ |
-| Upload gambar sendiri | ✅ | ❌ | ✅ |
 | Folder dengan sub-link | ✅ | ❌ | ❌ |
 | Text block kustom | ✅ | ❌ | Terbatas |
-| Profile banner kustom | ✅ | Terbatas | Terbatas |
 | Tanpa iklan / watermark | ✅ | ❌ | ✅ |
 | Analitik built-in | ❌ | ✅ | ✅ |
 | Custom domain | ✅ (sendiri) | ✅ (s.id/user) | ✅ |
@@ -167,15 +160,6 @@ Cara paling aman akses admin tanpa ekspos ke internet:
 ssh -L 8080:localhost:8080 user@SERVER_IP
 # Buka http://localhost:8080 di browser
 ```
-
----
-
-## 🔐 Keamanan
-
-- **Jangan commit `data/config.private.json`** — file ini berisi data sensitif
-- **Batasi akses admin** — jangan ekspos port 8080 ke internet publik
-- **Gunakan HTTPS** — selalu via Cloudflare Tunnel atau reverse proxy dengan SSL
-- Password konten dienkripsi **AES-256** di sisi server sebelum disimpan
 
 ---
 
