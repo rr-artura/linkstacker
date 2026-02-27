@@ -1,6 +1,6 @@
 # 🔗 Link Stacker
 
-**Link Stacker** adalah aplikasi *link-in-bio* self-hosted — alternatif open-source dari layanan seperti [s.id](https://s.id), [Linktree](https://linktr.ee), dan [Bento](https://bento.me).
+**Link Stacker** Self-hosted *link-in-bio* app — alternatif open-source dari layanan seperti [s.id](https://s.id) atau [Linktree](https://linktr.ee) yang dibangun menggunakan AI
 
 ![Preview](https://placehold.co/800x400/1e293b/94a3b8?text=Link+Stacker+Preview)
 
@@ -15,29 +15,6 @@
 - 🧩 **Duplicate item**
 - 🌈 **Tema background**
 - 🐳 **Docker-ready**
-
----
-
-## 📊 Perbandingan dengan s.id
-
-| Fitur | Link Stacker | s.id (Free) | s.id (Pro) |
-|---|:---:|:---:|:---:|
-| Self-hosted / data milik sendiri | ✅ | ❌ | ❌ |
-| Biaya bulanan | Gratis | Gratis* | ~Rp 50rb/bln |
-| Folder dengan sub-link | ✅ | ❌ | ❌ |
-| Text block kustom | ✅ | ❌ | Terbatas |
-| Tanpa iklan / watermark | ✅ | ❌ | ✅ |
-| Analitik built-in | ❌ | ✅ | ✅ |
-| Custom domain | ✅ (sendiri) | ✅ (s.id/user) | ✅ |
-| Open Source | ✅ | ❌ | ❌ |
-
-> *s.id gratis memiliki batasan fitur dan menampilkan branding s.id.
-
-**Kapan pakai Link Stacker?**
-- Anda ingin **data sepenuhnya milik sendiri**.
-- Butuh **konten terproteksi** dengan enkripsi sungguhan.
-- Ingin tampilan yang **100% bebas dikustomisasi**.
-- Tidak mau bergantung pada layanan pihak ketiga.
 
 ---
 
