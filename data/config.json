@@ -1,98 +1,107 @@
 {
   "settings": {
-    "siteTitle": "Link SMK SIG",
-    "favicon": "/uploads/upload-1771834208632-620575727.png",
+    "siteTitle": "John Doe - Links",
+    "favicon": "https://ui-avatars.com/api/?name=JD&background=3b82f6&color=fff",
     "background": {
       "type": "preset",
-      "value": "warm-flame"
+      "value": "sunset-glow"
     },
     "footer": {
-      "text": "Powered by RH",
-      "url": "",
-      "color": "#ffffff"
+      "text": "Powered by Link Stacker",
+      "url": "https://github.com/rh-project/linkstacker",
+      "color": "#e2e8f0"
     }
   },
   "items": [
     {
       "id": "item-prof-1",
       "type": "profile",
-      "url": "/uploads/upload-1771823839178-952683231.png",
-      "style": "frameless",
-      "bgColor": "#116fe8",
-      "bannerColor": "#ffffff",
-      "bannerOpacity": 0
+      "url": "https://ui-avatars.com/api/?name=John+Doe&background=3b82f6&color=fff",
+      "style": "framed",
+      "name": "John Doe",
+      "nameBold": true,
+      "nameFontSize": "1.5rem",
+      "nameColor": "#ffffff",
+      "nameShadowDir": "bottom",
+      "bio": "Software Engineer & Creator",
+      "bioColor": "#cbd5e1"
+    },
+    {
+      "id": "item-divider-1",
+      "type": "divider",
+      "style": "solid",
+      "color": "rgba(255, 255, 255, 0.2)",
+      "thickness": "1"
     },
     {
       "id": "item-1",
       "type": "text",
-      "content": "Welcome to my links!",
+      "content": "Check out my latest works below!",
       "style": "heading",
-      "textAlign": "center"
+      "textAlign": "center",
+      "textColor": "#f8fafc"
     },
     {
       "id": "item-2",
       "type": "link",
       "title": "My Portfolio",
-      "url": "https://example.com/portfolio",
+      "url": "https://example.com",
       "icon": "fas fa-briefcase",
-      "animation": "",
-      "description": "Check out my work",
+      "animation": "bounce",
+      "description": "View my recent projects",
       "titleBold": true,
-      "titleAlign": "center",
-      "descAlign": "center",
-      "descBold": true,
-      "descColor": "#ffffff"
+      "btnBgColor": "rgba(59, 130, 246, 0.8)",
+      "btnTextColor": "#ffffff"
     },
     {
-      "id": "item-4",
+      "id": "item-3",
       "type": "link",
       "title": "GitHub",
       "url": "https://github.com",
       "icon": "fab fa-github",
       "animation": "shake",
-      "description": ""
+      "btnBgColor": "rgba(15, 23, 42, 0.8)",
+      "btnTextColor": "#ffffff"
     },
     {
-      "id": "item-1771823039696",
-      "type": "divider",
-      "style": "double",
-      "color": "#e2e8f0",
-      "thickness": "5"
-    },
-    {
-      "id": "item-1771772556852",
-      "type": "link",
-      "title": "tes",
-      "icon": "",
-      "description": "ayam goreng",
-      "animation": "bounce",
-      "isProtected": true,
-      "encryptedData": "U2FsdGVkX1+OjiCBIJJW2rS6y3CbXztrF8jDpApTtwUYAz5b2e427xMSD5J8B7qf"
-    },
-    {
-      "id": "item-1771819873247",
+      "id": "item-4",
       "type": "folder",
-      "title": "New Folder",
-      "icon": "fas fa-folder",
+      "title": "Social Media",
+      "icon": "fas fa-hashtag",
+      "btnBgColor": "rgba(236, 72, 153, 0.8)",
+      "btnTextColor": "#ffffff",
+      "isProtected": false,
       "items": [
         {
-          "id": "item-1771823006741",
+          "id": "item-5",
           "type": "link",
-          "title": "New Link",
-          "url": "https://",
-          "icon": "fas fa-link"
+          "title": "Twitter",
+          "url": "https://twitter.com",
+          "icon": "fab fa-twitter",
+          "btnBgColor": "rgba(29, 161, 242, 0.8)",
+          "btnTextColor": "#ffffff"
         },
         {
-          "id": "item-1771823187091",
+          "id": "item-6",
           "type": "link",
-          "title": "New Link",
-          "url": "https://",
-          "icon": "fas fa-link"
+          "title": "LinkedIn",
+          "url": "https://linkedin.com",
+          "icon": "fab fa-linkedin",
+          "btnBgColor": "rgba(10, 102, 194, 0.8)",
+          "btnTextColor": "#ffffff"
         }
-      ],
-      "isProtected": false,
-      "password": "ayowes",
-      "descBold": false
+      ]
+    },
+    {
+      "id": "item-7",
+      "type": "link",
+      "title": "Secret Stash",
+      "url": "https://example.com/secret",
+      "icon": "fas fa-key",
+      "isProtected": true,
+      "encryptedData": "U2FsdGVkX1+OjiCBIJJW2rS6y3CbXztrF8jDpApTtwUYAz5b2e427xMSD5J8B7qf",
+      "btnBgColor": "rgba(245, 158, 11, 0.8)",
+      "btnTextColor": "#ffffff"
     }
   ]
 }

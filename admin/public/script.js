@@ -726,7 +726,7 @@ function renderItems(itemsArr, containerId, isFolderCtx) {
                     </div>
                 </div>
 
-                <!-- Button Color row -->
+                <!-- Button Color & Animation row -->
                 <div style="display:flex; align-items:flex-end; gap:1rem; background:var(--surface-2); border-radius:12px; padding:0.85rem 1rem; margin-bottom:1rem; flex-wrap:wrap;">
                     <div>
                         <div class="form-section-label">Button Color</div>
@@ -736,6 +736,14 @@ function renderItems(itemsArr, containerId, isFolderCtx) {
                         <div class="form-section-label">Custom BG (RGBA / Hex)</div>
                         <input type="text" class="form-group-input" value="${item.btnBgColor || ''}" placeholder="e.g. rgba(59,130,246,0.8)"
                             oninput="bindData(${index},'btnBgColor',this.value,${ctxStr})">
+                    </div>
+                    <div>
+                        <div class="form-section-label">Animation</div>
+                        <select class="form-select" onchange="bindData(${index},'animation',this.value,${ctxStr})" style="width:auto;">
+                            <option value="" ${!item.animation ? 'selected' : ''}>None</option>
+                            <option value="bounce" ${item.animation === 'bounce' ? 'selected' : ''}>Bounce</option>
+                            <option value="shake" ${item.animation === 'shake' ? 'selected' : ''}>Shake</option>
+                        </select>
                     </div>
                 </div>
 
