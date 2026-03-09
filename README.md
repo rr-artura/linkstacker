@@ -2,7 +2,7 @@
 
 **Link Stacker** Self-hosted *link-in-bio* app — alternatif open-source dari layanan seperti [s.id](https://s.id) atau [Linktree](https://linktr.ee) yang dibangun menggunakan AI
 
-![Preview](https://placehold.co/800x400/1e293b/94a3b8?text=Link+Stacker+Preview)
+![Public view](/images/1.png)
 
 ---
 
