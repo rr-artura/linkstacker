@@ -21,6 +21,7 @@
 - 📁 **Link terproteksi**
 - 🧩 **Duplicate item**
 - 🌈 **Tema background**
+- 🗂 **Backup dan Restore**
 - 🐳 **Docker-ready**
 
 ---
