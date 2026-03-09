@@ -5,6 +5,12 @@
 ![Public view](/images/1.png)
 
 ![Admin Panel](/images/2.png)
+
+![Component](/images/3.png)
+
+![Global Setting](/images/4.png)
+
+![GLobal Setting 2](/images/5.png)
 ---
 
 ## ✨ Fitur Utama
