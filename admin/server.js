@@ -89,8 +89,9 @@ const upload = multer({ storage: storage });
 
 // Serve Admin UI statically
 app.use(express.static(path.join(__dirname, 'public')));
-// Serve user uploads statically at /uploads
+// Serve user uploads statically at /uploads (legacy) and /data/uploads (new)
 app.use('/uploads', express.static(uploadsDir));
+app.use('/data/uploads', express.static(uploadsDir));
 
 // API: Get Admin Private Config Data
 app.get('/api/config', (req, res) => {
@@ -145,8 +146,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
         return res.status(400).json({ error: 'No file uploaded.' });
     }
     // Return the relative URL which will be handled by the frontend
-    // When proxying or local, /uploads maps to the data/uploads folder
-    const fileUrl = `/uploads/${req.file.filename}`;
+    // Path includes /data to align with public Nginx volume mount
+    const fileUrl = `/data/uploads/${req.file.filename}`;
     res.json({ success: true, url: fileUrl });
 });
 

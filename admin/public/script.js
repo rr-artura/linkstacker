@@ -5,6 +5,10 @@ let config = { settings: {}, items: [] };
 // For Folder functionality
 let currentFolderIndex = null;
 
+// For Drag and Drop functionality
+let draggedItemIndex = null;
+let draggedItemCtx = null;
+
 // A large subset of FontAwesome icons for the picker
 const FA_ICONS = [
     'fas fa-link', 'fas fa-home', 'fas fa-user', 'fas fa-envelope', 'fas fa-phone',
@@ -325,11 +329,37 @@ function addNewItem(type, folderIndex = null) {
 
 window.deleteItem = function (index, e, isFolderCtx) {
     if (e) e.stopPropagation();
-    if (confirm('Remove this block?')) {
+
+    const overlay = document.createElement('div');
+    overlay.className = 'dynamic-modal-overlay';
+    overlay.onclick = (ev) => { if (ev.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+        <div class="dynamic-modal-box">
+            <div style="font-size:1rem;font-weight:700;color:#f6f6f6;margin-bottom:0.35rem;">
+                <i class="fas fa-trash-alt" style="color:#ef4444;margin-right:6px;"></i>Delete Item
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:1.25rem;">
+                Are you sure you want to remove this block? This cannot be undone.
+            </div>
+            <div style="display:flex;gap:0.75rem;">
+                <button class="btn btn-danger" style="flex:1;background:#ef4444;color:#fff;border:none;" id="del-confirm">
+                    <i class="fas fa-check"></i> Delete
+                </button>
+                <button class="btn btn-secondary" id="del-cancel">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>`;
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('#del-cancel').onclick = () => overlay.remove();
+
+    overlay.querySelector('#del-confirm').onclick = () => {
+        overlay.remove();
         const targetArr = isFolderCtx ? config.items[currentFolderIndex].items : config.items;
         targetArr.splice(index, 1);
         renderItems(targetArr, isFolderCtx ? 'folder-links-container' : 'admin-links-container', isFolderCtx);
-    }
+    };
 }
 
 window.moveItem = function (index, direction, e, isFolderCtx) {
@@ -368,10 +398,10 @@ window.duplicateItem = function (index, e, isFolderCtx) {
     }).join('');
 
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    overlay.className = 'dynamic-modal-overlay';
     overlay.onclick = (ev) => { if (ev.target === overlay) overlay.remove(); };
     overlay.innerHTML = `
-        <div style="background:#1e293b;border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:1.75rem 2rem;min-width:300px;max-width:360px;box-shadow:0 24px 48px rgba(0,0,0,0.6);animation:fadeInDown 0.2s ease-out;">
+        <div class="dynamic-modal-box">
             <div style="font-size:1rem;font-weight:700;color:#f6f6f6;margin-bottom:0.35rem;">
                 <i class="fas fa-copy" style="color:var(--accent);margin-right:6px;"></i>Duplicate — Destination
             </div>
@@ -440,9 +470,42 @@ window.toggleItem = function (index, prefix) {
     if (acc) acc.classList.toggle('expanded');
 }
 
+window.updatePreviewDOM = function (index, isFolderCtx) {
+    const targetArr = isFolderCtx ? config.items[currentFolderIndex].items : config.items;
+    const item = targetArr[index];
+    if (!item) return;
+
+    const accPrefix = isFolderCtx ? 'f' : 'm';
+    const acc = document.getElementById(`${accPrefix}-item-acc-${index}`);
+    if (!acc) return;
+
+    let iconHtml = ''; let titleTxt = ''; let subTxt = '';
+
+    if (item.type === 'profile') {
+        iconHtml = '<i class="fas fa-user-circle"></i>'; titleTxt = 'Profile Block'; subTxt = item.url;
+    } else if (item.type === 'link') {
+        iconHtml = `<i class="${item.icon || 'fas fa-link'}"></i>`; titleTxt = item.title; subTxt = item.isProtected ? '🔒 Protected URL' : item.url;
+    } else if (item.type === 'text') {
+        iconHtml = '<i class="fas fa-align-left"></i>'; titleTxt = item.content; subTxt = 'Style: ' + item.style;
+    } else if (item.type === 'divider') {
+        iconHtml = '<i class="fas fa-minus"></i>'; titleTxt = 'Divider'; subTxt = item.style || 'solid';
+    } else if (item.type === 'folder') {
+        iconHtml = `<i class="${item.icon || 'fas fa-folder'}"></i>`; titleTxt = item.title; subTxt = item.isProtected ? '🔒 Protected Folder' : `${item.items ? item.items.length : 0} items`;
+    }
+
+    const titleEl = acc.querySelector('.item-preview-title');
+    const subEl = acc.querySelector('.item-preview-sub');
+    const iconEl = acc.querySelector('.item-preview-icon');
+
+    if (titleEl) titleEl.textContent = titleTxt;
+    if (subEl) subEl.textContent = subTxt;
+    if (iconEl) iconEl.innerHTML = iconHtml;
+}
+
 window.bindData = function (index, key, value, isFolderCtx = false) {
     const targetArr = isFolderCtx ? config.items[currentFolderIndex].items : config.items;
     targetArr[index][key] = value;
+    window.updatePreviewDOM(index, isFolderCtx);
 }
 
 window.bindToggleData = function (index, key, checkbox, isFolderCtx = false) {
@@ -894,6 +957,80 @@ function renderItems(itemsArr, containerId, isFolderCtx) {
                         ${formHtml}
                     </div>
                     `;
+
+        // Add Drag and Drop handlers
+        acc.draggable = true;
+        acc.addEventListener('dragstart', (e) => {
+            draggedItemIndex = index;
+            draggedItemCtx = isFolderCtx;
+            e.dataTransfer.effectAllowed = 'move';
+            // Use setTimeout to allow the UI to show the dragged element correctly
+            setTimeout(() => {
+                acc.style.opacity = '0.4';
+                acc.classList.add('dragging');
+            }, 0);
+        });
+
+        acc.addEventListener('dragend', () => {
+            acc.style.opacity = '1';
+            acc.classList.remove('dragging');
+            document.querySelectorAll('.item-accordion').forEach(el => {
+                el.style.borderTop = '';
+                el.style.borderBottom = '';
+            });
+            draggedItemIndex = null;
+            draggedItemCtx = null;
+        });
+
+        acc.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (draggedItemCtx !== isFolderCtx || draggedItemIndex === null || draggedItemIndex === index) return;
+
+            // Visual feedback based on position
+            const bound = acc.getBoundingClientRect();
+            const offset = e.clientY - bound.top;
+            if (offset > bound.height / 2) {
+                acc.style.borderBottom = '3px solid var(--accent)';
+                acc.style.borderTop = '';
+            } else {
+                acc.style.borderTop = '3px solid var(--accent)';
+                acc.style.borderBottom = '';
+            }
+        });
+
+        acc.addEventListener('dragleave', () => {
+            acc.style.borderTop = '';
+            acc.style.borderBottom = '';
+        });
+
+        acc.addEventListener('drop', (e) => {
+            e.preventDefault();
+            acc.style.borderTop = '';
+            acc.style.borderBottom = '';
+
+            if (draggedItemCtx !== isFolderCtx || draggedItemIndex === null || draggedItemIndex === index) return;
+
+            const bound = acc.getBoundingClientRect();
+            const offset = e.clientY - bound.top;
+            let targetIndex = index;
+
+            // Calculate actual drop index depending on upper vs lower half
+            if (offset > bound.height / 2) {
+                targetIndex++;
+            }
+            if (draggedItemIndex < targetIndex) {
+                targetIndex--; // adjusting for removal
+            }
+
+            if (draggedItemIndex === targetIndex) return;
+
+            const targetArr = isFolderCtx ? config.items[currentFolderIndex].items : config.items;
+            const itemToMove = targetArr.splice(draggedItemIndex, 1)[0];
+            targetArr.splice(targetIndex, 0, itemToMove);
+
+            renderItems(targetArr, containerId, isFolderCtx);
+        });
+
         container.appendChild(acc);
     });
 }
@@ -908,4 +1045,62 @@ function showToast(msg, type = 'success') {
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m] || m));
+}
+
+window.exportConfig = function () {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", "link-stacker-backup.json");
+    dlAnchorElem.click();
+}
+
+window.importConfig = function (input) {
+    if (!input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const importedConfig = JSON.parse(e.target.result);
+            if (!importedConfig.settings || !importedConfig.items) {
+                throw new Error("Invalid config format");
+            }
+
+            const overlay = document.createElement('div');
+            overlay.className = 'dynamic-modal-overlay';
+            overlay.innerHTML = `
+                <div class="dynamic-modal-box">
+                    <div style="font-size:1rem;font-weight:700;color:#f6f6f6;margin-bottom:0.35rem;">
+                        <i class="fas fa-exclamation-triangle" style="color:#f59e0b;margin-right:6px;"></i>Restore Backup
+                    </div>
+                    <div style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:1.25rem;">
+                        Are you sure you want to restore this configuration? All current unsaved work will be lost and replaced by the backup.
+                    </div>
+                    <div style="display:flex;gap:0.75rem;">
+                        <button class="btn btn-primary" style="flex:1;" id="rest-confirm">
+                            <i class="fas fa-check"></i> Restore
+                        </button>
+                        <button class="btn btn-secondary" id="rest-cancel">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>`;
+            document.body.appendChild(overlay);
+
+            overlay.querySelector('#rest-cancel').onclick = () => overlay.remove();
+
+            overlay.querySelector('#rest-confirm').onclick = async () => {
+                overlay.remove();
+                config = importedConfig;
+                populateSettingsForm();
+                renderItems(config.items, 'admin-links-container', false);
+                await saveConfig(); // this will also regenerate and write the public config
+                showToast("Configuration restored and saved securely!", "success");
+            };
+        } catch (err) {
+            showToast("Failed to restore config: " + err.message, "error");
+        }
+        input.value = ''; // Reset input
+    };
+    reader.readAsText(file);
 }
