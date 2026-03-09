@@ -4,6 +4,7 @@
 
 ![Public view](/images/1.png)
 
+![Admin Panel](/images/2.png)
 ---
 
 ## ✨ Fitur Utama
