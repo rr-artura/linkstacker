@@ -18,7 +18,7 @@
 - 🎨 **Isolated Admin Panel**
 - 🔗 **Link, Folder, Text Block, Divider**
 - 🖼️ **Profile Banner**
-- 📁 **Link terproteksi**
+- 🔑 **Link terproteksi**
 - 🧩 **Duplicate item**
 - 🌈 **Tema background**
 - 🗂 **Backup dan Restore**
