@@ -151,6 +151,25 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     res.json({ success: true, url: fileUrl });
 });
 
+// API: Shortlink Redirect Fallback (For testing on localhost:8080)
+app.get('/:slug', (req, res, next) => {
+    const slug = req.params.slug;
+    fs.readFile(publicConfigPath, 'utf8', (err, data) => {
+        if (!err) {
+            try {
+                const config = JSON.parse(data);
+                if (config.shortlinks) {
+                    const match = config.shortlinks.find(s => s.slug === slug);
+                    if (match && match.url) {
+                        return res.redirect(match.url);
+                    }
+                }
+            } catch (e) { }
+        }
+        next();
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 Admin API Server running on port ${PORT}`);
 });

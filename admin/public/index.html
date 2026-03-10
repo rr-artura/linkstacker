@@ -24,6 +24,7 @@
         <div class="tabs">
             <button class="tab-btn active" data-target="tab-items"><i class="fas fa-list"></i> Structure &
                 Links</button>
+            <button class="tab-btn" data-target="tab-shortener"><i class="fas fa-link"></i> URL Shortener</button>
             <button class="tab-btn" data-target="tab-settings"><i class="fas fa-cog"></i> Global Settings</button>
         </div>
 
@@ -44,6 +45,28 @@
             </div>
         </div>
 
+        <div class="tab-content hidden" id="tab-shortener">
+            <div class="centered-layout">
+                <div class="panel">
+                    <h2><i class="fas fa-link"></i> URL Shortener</h2>
+                    <p class="subtitle">Create and manage clean short links (e.g., domain.com/promo)</p>
+
+                    <div class="form-group" style="display:flex; gap:0.5rem; margin-bottom: 2rem;">
+                        <input type="url" id="new-shortlink-url" placeholder="https://your-long-destination-url.com..."
+                            style="flex:1;">
+                        <button class="btn btn-primary" onclick="openShortlinkModal()"><i class="fas fa-magic"></i>
+                            Shorten</button>
+                    </div>
+
+                    <h3><i class="fas fa-list"></i> Your Shortlinks</h3>
+                    <div id="shortlinks-list" class="admin-links-list" style="margin-top: 1rem;">
+                        <!-- Shortlinks will be injected here -->
+                        <div class="loading">No shortlinks found.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="tab-content hidden" id="tab-settings">
             <div class="centered-layout">
                 <div class="panel">
@@ -52,120 +75,131 @@
                         <div class="form-group">
                             <label>Site Title</label>
                             <input type="text" id="set-title">
-                        </div>
-                        <div class="form-group">
-                            <label>Favicon URL or Upload</label>
-                            <div class="upload-flex">
-                                <input type="text" id="set-favicon" placeholder="https://..." style="flex:1;">
-                                <input type="file" id="favicon-file" accept="image/*" style="display:none;">
-                                <button type="button" class="btn btn-secondary"
-                                    onclick="document.getElementById('favicon-file').click()">
-                                    <i class="fas fa-upload"></i> Upload
-                                </button>
+                            <div class="form-group">
+                                <label>Site Description (SEO)</label>
+                                <textarea id="set-description"
+                                    placeholder="Deskripsi singkat website untuk preview WhatsApp/SEO..."
+                                    style="width:100%; padding:0.65rem 0.9rem; border:1px solid var(--border-color); border-radius:8px; font-family:inherit; font-size:0.9rem; resize:vertical; min-height:80px;"></textarea>
                             </div>
-                        </div>
-
-                        <hr class="form-hr">
-
-                        <h3>Background Theme</h3>
-                        <div class="form-group">
-                            <label>Background Type</label>
-                            <select id="set-bg-type" class="form-select">
-                                <option value="preset">Preset Animation (Blobs/Gradients)</option>
-                                <option value="color">Solid CSS Color</option>
-                                <option value="gradient">Custom Gradient</option>
-                                <option value="url">Image URL / Upload Image</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="set-bg-color-wrap" style="display:none;">
-                            <label>Solid Background Color</label>
-                            <input type="color" id="set-bg-color-val" value="#0f172a"
-                                style="width: 100px; height: 50px;">
-                        </div>
-                        <div class="form-group" id="set-bg-gradient-wrap" style="display:none;">
-                            <label>Gradient Colors (Top to Bottom)</label>
-                            <div style="display:flex; gap:10px;">
-                                <input type="color" id="set-bg-grad1" value="#3b82f6"
-                                    style="width: 100px; height: 50px;">
-                                <input type="color" id="set-bg-grad2" value="#8b5cf6"
-                                    style="width: 100px; height: 50px;">
-                            </div>
-                        </div>
-                        <div class="form-group" id="set-bg-url-wrap" style="display:none;">
-                            <label>Background Image URL</label>
-                            <input type="text" id="set-bg-url-val" placeholder="https://...">
-                        </div>
-
-                        <div class="form-group" id="preset-grid-wrap" style="display:none;">
-                            <label>Select a Preset Theme</label>
-                            <div class="bg-preset-grid" id="bg-preset-grid">
-                                <div class="bg-preset-item" data-preset="blob-animation"
-                                    style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);"
-                                    title="Blob Gradient"></div>
-                                <div class="bg-preset-item" data-preset="dark-waves"
-                                    style="background: #0f172a; border-bottom: 5px solid #3b82f6;" title="Dark Waves">
+                            <div class="form-group">
+                                <label>Favicon URL or Upload</label>
+                                <div class="upload-flex">
+                                    <input type="text" id="set-favicon" placeholder="https://..." style="flex:1;">
+                                    <input type="file" id="favicon-file" accept="image/*" style="display:none;">
+                                    <button type="button" class="btn btn-secondary"
+                                        onclick="document.getElementById('favicon-file').click()">
+                                        <i class="fas fa-upload"></i> Upload
+                                    </button>
                                 </div>
-                                <div class="bg-preset-item" data-preset="sunset-glow"
-                                    style="background: linear-gradient(to right, #ff7e5f, #feb47b);"
-                                    title="Sunset Glow"></div>
-                                <div class="bg-preset-item" data-preset="northern-star"
-                                    style="background: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);"
-                                    title="Northern Star"></div>
-                                <div class="bg-preset-item" data-preset="purple-haze"
-                                    style="background: linear-gradient(to top, #c471f5 0%, #fa71cd 100%);"
-                                    title="Purple Haze"></div>
-                                <div class="bg-preset-item" data-preset="midnight-city"
-                                    style="background: linear-gradient(to top, #209cff 0%, #68e0cf 100%);"
-                                    title="Midnight City"></div>
-                                <div class="bg-preset-item" data-preset="warm-flame"
-                                    style="background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);"
-                                    title="Warm Flame"></div>
-                                <div class="bg-preset-item" data-preset="clean-glass"
-                                    style="background: #f8fafc; border: 1px solid #e2e8f0; color:#0f172a; text-align:center; line-height:56px;font-size:0.8rem;"
-                                    title="Clean Glass">Glass</div>
-                                <div class="bg-preset-item" data-preset="hacker-terminal"
-                                    style="background: #000; border: 1px solid #10b981;" title="Terminal"></div>
-                                <div class="bg-preset-item" data-preset="cherry-blossom"
-                                    style="background: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);"
-                                    title="Cherry Blossom"></div>
                             </div>
-                        </div>
 
-                        <div class="form-group" id="set-bg-upload-wrap">
-                            <label>Or Upload Custom Background</label>
-                            <div class="upload-flex">
-                                <input type="file" id="set-bg-file" accept="image/*">
-                                <button type="button" class="btn btn-secondary" id="btn-upload-bg">Upload</button>
+                            <hr class="form-hr">
+
+                            <h3>Background Theme</h3>
+                            <div class="form-group">
+                                <label>Background Type</label>
+                                <select id="set-bg-type" class="form-select">
+                                    <option value="preset">Preset Animation (Blobs/Gradients)</option>
+                                    <option value="color">Solid CSS Color</option>
+                                    <option value="gradient">Custom Gradient</option>
+                                    <option value="url">Image URL / Upload Image</option>
+                                </select>
                             </div>
-                        </div>
+                            <div class="form-group" id="set-bg-color-wrap" style="display:none;">
+                                <label>Solid Background Color</label>
+                                <input type="color" id="set-bg-color-val" value="#0f172a"
+                                    style="width: 100px; height: 50px;">
+                            </div>
+                            <div class="form-group" id="set-bg-gradient-wrap" style="display:none;">
+                                <label>Gradient Colors (Top to Bottom)</label>
+                                <div style="display:flex; gap:10px;">
+                                    <input type="color" id="set-bg-grad1" value="#3b82f6"
+                                        style="width: 100px; height: 50px;">
+                                    <input type="color" id="set-bg-grad2" value="#8b5cf6"
+                                        style="width: 100px; height: 50px;">
+                                </div>
+                            </div>
+                            <div class="form-group" id="set-bg-url-wrap" style="display:none;">
+                                <label>Background Image URL</label>
+                                <input type="text" id="set-bg-url-val" placeholder="https://...">
+                            </div>
 
-                        <hr class="form-hr">
+                            <div class="form-group" id="preset-grid-wrap" style="display:none;">
+                                <label>Select a Preset Theme</label>
+                                <div class="bg-preset-grid" id="bg-preset-grid">
+                                    <div class="bg-preset-item" data-preset="blob-animation"
+                                        style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);"
+                                        title="Blob Gradient"></div>
+                                    <div class="bg-preset-item" data-preset="dark-waves"
+                                        style="background: #0f172a; border-bottom: 5px solid #3b82f6;"
+                                        title="Dark Waves">
+                                    </div>
+                                    <div class="bg-preset-item" data-preset="sunset-glow"
+                                        style="background: linear-gradient(to right, #ff7e5f, #feb47b);"
+                                        title="Sunset Glow"></div>
+                                    <div class="bg-preset-item" data-preset="northern-star"
+                                        style="background: linear-gradient(to right, #43e97b 0%, #38f9d7 100%);"
+                                        title="Northern Star"></div>
+                                    <div class="bg-preset-item" data-preset="purple-haze"
+                                        style="background: linear-gradient(to top, #c471f5 0%, #fa71cd 100%);"
+                                        title="Purple Haze"></div>
+                                    <div class="bg-preset-item" data-preset="midnight-city"
+                                        style="background: linear-gradient(to top, #209cff 0%, #68e0cf 100%);"
+                                        title="Midnight City"></div>
+                                    <div class="bg-preset-item" data-preset="warm-flame"
+                                        style="background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);"
+                                        title="Warm Flame"></div>
+                                    <div class="bg-preset-item" data-preset="clean-glass"
+                                        style="background: #f8fafc; border: 1px solid #e2e8f0; color:#0f172a; text-align:center; line-height:56px;font-size:0.8rem;"
+                                        title="Clean Glass">Glass</div>
+                                    <div class="bg-preset-item" data-preset="hacker-terminal"
+                                        style="background: #000; border: 1px solid #10b981;" title="Terminal"></div>
+                                    <div class="bg-preset-item" data-preset="cherry-blossom"
+                                        style="background: linear-gradient(120deg, #f093fb 0%, #f5576c 100%);"
+                                        title="Cherry Blossom"></div>
+                                </div>
+                            </div>
 
-                        <h3>Footer Options</h3>
-                        <div class="form-group">
-                            <label>Powered By Text</label>
-                            <input type="text" id="set-footer-text" placeholder="Powered by Link Stacker">
-                        </div>
-                        <div class="form-group">
-                            <label>Footer URL (Optional)</label>
-                            <input type="url" id="set-footer-url" placeholder="https://...">
-                        </div>
-                        <div class="form-group">
-                            <label>Footer Text Color</label>
-                            <input type="color" id="set-footer-color" value="#64748b" style="width: 100px; height: 50px;">
-                        </div>
+                            <div class="form-group" id="set-bg-upload-wrap">
+                                <label>Or Upload Custom Background</label>
+                                <div class="upload-flex">
+                                    <input type="file" id="set-bg-file" accept="image/*">
+                                    <button type="button" class="btn btn-secondary" id="btn-upload-bg">Upload</button>
+                                </div>
+                            </div>
 
-                        <hr class="form-hr">
-                        
-                        <h3><i class="fas fa-database" style="color:#3b82f6;"></i> Backup & Restore</h3>
-                        <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">Protect your data by downloading a full backup of your links and settings, or restore from a previously saved backup file.</p>
-                        <div class="form-group" style="display:flex; gap:1rem; align-items:center;">
-                            <button type="button" class="btn btn-secondary" onclick="exportConfig()"><i class="fas fa-download"></i> Download Backup</button>
-                            <label class="btn btn-primary" style="margin:0; cursor:pointer;">
-                                <i class="fas fa-upload"></i> Restore Backup
-                                <input type="file" id="import-config-file" accept=".json" style="display:none;" onchange="importConfig(this)">
-                            </label>
-                        </div>
+                            <hr class="form-hr">
+
+                            <h3>Footer Options</h3>
+                            <div class="form-group">
+                                <label>Powered By Text</label>
+                                <input type="text" id="set-footer-text" placeholder="Powered by Link Stacker">
+                            </div>
+                            <div class="form-group">
+                                <label>Footer URL (Optional)</label>
+                                <input type="url" id="set-footer-url" placeholder="https://...">
+                            </div>
+                            <div class="form-group">
+                                <label>Footer Text Color</label>
+                                <input type="color" id="set-footer-color" value="#64748b"
+                                    style="width: 100px; height: 50px;">
+                            </div>
+
+                            <hr class="form-hr">
+
+                            <h3><i class="fas fa-database" style="color:#3b82f6;"></i> Backup & Restore</h3>
+                            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;">Protect your
+                                data by downloading a full backup of your links and settings, or restore from a
+                                previously saved backup file.</p>
+                            <div class="form-group" style="display:flex; gap:1rem; align-items:center;">
+                                <button type="button" class="btn btn-secondary" onclick="exportConfig()"><i
+                                        class="fas fa-download"></i> Download Backup</button>
+                                <label class="btn btn-primary" style="margin:0; cursor:pointer;">
+                                    <i class="fas fa-upload"></i> Restore Backup
+                                    <input type="file" id="import-config-file" accept=".json" style="display:none;"
+                                        onchange="importConfig(this)">
+                                </label>
+                            </div>
                     </form>
                 </div>
             </div>
@@ -244,6 +278,40 @@
                 <button class="btn btn-add-component" id="btn-folder-add" style="margin-bottom: 10px;">
                     <i class="fas fa-plus"></i> Add component to folder
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortlink Edit Modal -->
+    <div id="shortlink-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-link"></i> Save Shortlink</h3>
+                <button class="btn-close" onclick="closeModal('shortlink-modal')">&times;</button>
+            </div>
+
+            <input type="hidden" id="shortlink-original-slug">
+
+            <div class="form-group">
+                <label>Destination URL</label>
+                <input type="url" id="shortlink-edit-url" required>
+            </div>
+
+            <div class="form-group">
+                <label>Short URL Slug</label>
+                <div
+                    style="display:flex; align-items:center; background:#f1f5f9; border:1px solid var(--border-color); border-radius:8px; overflow:hidden;">
+                    <span
+                        style="padding: 0.65rem 0.5rem 0.65rem 0.9rem; color:var(--text-secondary); background:#e2e8f0;">domain.com/</span>
+                    <input type="text" id="shortlink-edit-slug" style="border:none; border-radius:0; flex:1;" required>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.4rem;">Randomized case-sensitive
+                    5 characters. Change if desired.</p>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
+                <button class="btn btn-secondary" onclick="closeModal('shortlink-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveShortlinkBtn()"><i class="fas fa-check"></i> OK</button>
             </div>
         </div>
     </div>

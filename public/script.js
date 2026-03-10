@@ -41,6 +41,12 @@ async function fetchConfig() {
 
         // Push root to history
         pageHistory.push({ items: config.items, title: "Home" });
+
+        // Check for URL shortener redirect
+        if (checkShortlink()) {
+            return; // Don't render if redirecting
+        }
+
         renderCurrentPage();
     } catch (error) {
         console.error(error);
@@ -54,7 +60,16 @@ function applyGlobalSettings() {
     const s = config.settings;
 
     // Title & Favicon
-    if (s.siteTitle) document.title = s.siteTitle;
+    if (s.siteTitle) {
+        document.title = s.siteTitle;
+        setMetaTag('property', 'og:title', s.siteTitle);
+    }
+
+    if (s.siteDescription) {
+        setMetaTag('name', 'description', s.siteDescription);
+        setMetaTag('property', 'og:description', s.siteDescription);
+    }
+
     if (s.favicon) document.getElementById('dynamic-favicon').href = resolveUrl(s.favicon);
 
     // Background
@@ -104,6 +119,54 @@ function resolveUrl(url) {
         return `http://localhost:8080${url}`;
     }
     return url;
+}
+
+function setMetaTag(attrName, attrValue, content) {
+    let tag = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+    if (!tag) {
+        tag = document.createElement('meta');
+        tag.setAttribute(attrName, attrValue);
+        document.head.appendChild(tag);
+    }
+    tag.setAttribute('content', content);
+}
+
+function checkShortlink() {
+    const pathname = window.location.pathname;
+
+    // Default route / or index.html
+    if (pathname === '/' || pathname === '/index.html' || pathname === '') {
+        return false;
+    }
+
+    // Extract slug (e.g., from "/promo" to "promo")
+    const slug = pathname.replace(/^\/+|\/+$/g, '');
+
+    if (config.shortlinks && config.shortlinks.length > 0) {
+        const linkMatch = config.shortlinks.find(s => s.slug === slug);
+        if (linkMatch && linkMatch.url) {
+            // Found a match! Redirecting immediately.
+            document.body.innerHTML = `
+                <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; color:var(--text-secondary);">
+                    <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--accent); margin-bottom:1rem;"></i>
+                    <p>Redirecting to destination...</p>
+                </div>
+            `;
+            window.location.replace(linkMatch.url);
+            return true;
+        }
+    }
+
+    // Not found in shortlinks. Since NGINX fell back to here for an unknown route, show invalid link.
+    document.body.innerHTML = `
+        <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; color:var(--text-secondary); text-align:center; padding: 2rem;">
+            <i class="fas fa-exclamation-circle fa-4x" style="color:#ef4444; margin-bottom:1.5rem;"></i>
+            <h2 style="color:var(--text-primary); margin-bottom:0.5rem;">Link Not Found</h2>
+            <p style="max-width:400px; margin-bottom:2rem;">The link <strong>domain.com/${escapeHtml(slug)}</strong> does not exist or has been removed.</p>
+            <a href="/" style="padding: 0.75rem 1.5rem; background:var(--accent); color:white; border-radius:8px; text-decoration:none; font-weight:bold;">Return Home</a>
+        </div>
+    `;
+    return true; // We handled the rendering, don't run normal render
 }
 
 // ---- RENDERING ENGINE ----

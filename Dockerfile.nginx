@@ -1,8 +1,11 @@
 # Dockerfile.nginx
 FROM nginx:alpine
 
+# Replace the default Nginx config with our custom one to support clean URLs
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copy static frontend files to Nginx default html folder
 COPY ./public /usr/share/nginx/html
 
-# We don't copy the data folder here directly, 
+# We don't copy the data folder here directly,
 # it will be mounted as a volume so both Nginx and Admin can access the live links.json

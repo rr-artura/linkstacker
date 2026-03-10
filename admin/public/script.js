@@ -96,9 +96,11 @@ async function fetchConfig() {
 
         if (!config.settings) config.settings = {};
         if (!config.items) config.items = [];
+        if (!config.shortlinks) config.shortlinks = [];
 
         populateSettingsForm();
         renderItems(config.items, 'admin-links-container', false);
+        renderShortlinks();
     } catch (error) {
         showToast('Error loading data: ' + error.message, 'error');
     }
@@ -106,6 +108,7 @@ async function fetchConfig() {
 
 async function saveConfig() {
     config.settings.siteTitle = document.getElementById('set-title').value;
+    config.settings.siteDescription = document.getElementById('set-description').value;
     config.settings.favicon = document.getElementById('set-favicon').value;
 
     let bgValue = '';
@@ -1103,4 +1106,164 @@ window.importConfig = function (input) {
         input.value = ''; // Reset input
     };
     reader.readAsText(file);
+}
+
+// -- URL Shortener Logic --
+
+function renderShortlinks() {
+    const container = document.getElementById('shortlinks-list');
+    container.innerHTML = '';
+
+    if (!config.shortlinks || config.shortlinks.length === 0) {
+        container.innerHTML = '<div class="loading" style="padding:1rem;">No shortlinks found. Create one above!</div>';
+        return;
+    }
+
+    config.shortlinks.forEach(link => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; background:#fff; border:1px solid var(--border-color); border-radius:10px; padding:1.25rem; margin-bottom:0.75rem;';
+
+        row.innerHTML = `
+            <div style="overflow:hidden; flex:1; margin-right:1rem;">
+                <div style="font-weight:600; color:var(--text-primary); font-size:1.05rem; display:flex; align-items:center;">
+                    <i class="fas fa-link" style="color:var(--accent); margin-right:8px; font-size:0.9rem;"></i> 
+                    domain.com/${escapeHtml(link.slug)}
+                </div>
+                <div style="color:var(--text-secondary); font-size:0.85rem; margin-top:0.3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    <i class="fas fa-arrow-right" style="margin-right:4px; font-size:0.7rem;"></i> ${escapeHtml(link.url)}
+                </div>
+            </div>
+            <div style="display:flex; gap:0.5rem; flex-shrink:0;">
+                <button class="btn-icon" title="Edit" onclick="openShortlinkModal('${escapeHtml(link.slug)}')"><i class="fas fa-pen"></i></button>
+                <button class="btn-icon danger" title="Delete" onclick="deleteShortlink('${escapeHtml(link.slug)}')"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        container.appendChild(row);
+    });
+}
+
+window.closeModal = function (id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+}
+
+function generateSlug() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 5; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+window.openShortlinkModal = async function (editSlug = null) {
+    const modal = document.getElementById('shortlink-modal');
+
+    // Clear old data
+    document.getElementById('shortlink-original-slug').value = '';
+    document.getElementById('shortlink-edit-url').value = '';
+    document.getElementById('shortlink-edit-slug').value = '';
+
+    if (editSlug) {
+        // Edit existing mode
+        const link = config.shortlinks.find(s => s.slug === editSlug);
+        if (link) {
+            document.getElementById('shortlink-original-slug').value = link.slug;
+            document.getElementById('shortlink-edit-url').value = link.url;
+            document.getElementById('shortlink-edit-slug').value = link.slug;
+            modal.classList.remove('hidden');
+        }
+    } else {
+        // Create new mode
+        const newUrlInput = document.getElementById('new-shortlink-url');
+        if (!newUrlInput.value.trim()) {
+            return showToast("Please enter a destination URL first", "error");
+        }
+
+        let url = newUrlInput.value.trim();
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+        }
+
+        const newSlug = generateSlug();
+
+        // Auto-save immediately
+        config.shortlinks.unshift({ slug: newSlug, url: url });
+        document.getElementById('new-shortlink-url').value = '';
+        renderShortlinks();
+        await saveConfig();
+        showToast("Shortlink created!", "success");
+
+        // Open modal to show what was created, and allow optional edits
+        document.getElementById('shortlink-original-slug').value = newSlug;
+        document.getElementById('shortlink-edit-url').value = url;
+        document.getElementById('shortlink-edit-slug').value = newSlug;
+        modal.classList.remove('hidden');
+    }
+}
+
+window.saveShortlinkBtn = async function () {
+    const origSlug = document.getElementById('shortlink-original-slug').value;
+    let newUrl = document.getElementById('shortlink-edit-url').value.trim();
+    const newSlug = document.getElementById('shortlink-edit-slug').value.trim();
+
+    if (!newUrl || !newSlug) {
+        return showToast("All fields are required", "error");
+    }
+
+    if (!newUrl.startsWith('http')) newUrl = 'https://' + newUrl;
+
+    // Check if new slug already exists
+    if (!origSlug || origSlug !== newSlug) {
+        if (config.shortlinks.some(s => s.slug === newSlug)) {
+            return showToast("Shortlink slug already taken!", "error");
+        }
+    }
+
+    if (origSlug) {
+        // Updating existing
+        const idx = config.shortlinks.findIndex(s => s.slug === origSlug);
+        if (idx > -1) {
+            config.shortlinks[idx].slug = newSlug;
+            config.shortlinks[idx].url = newUrl;
+        }
+    }
+
+    closeModal('shortlink-modal');
+    renderShortlinks();
+    await saveConfig();
+    showToast("Saved!", "success");
+}
+
+window.deleteShortlink = function (slug) {
+    const overlay = document.createElement('div');
+    overlay.className = 'dynamic-modal-overlay';
+    overlay.onclick = (ev) => { if (ev.target === overlay) overlay.remove(); };
+    overlay.innerHTML = `
+        <div class="dynamic-modal-box">
+            <div style="font-size:1rem;font-weight:700;color:#f6f6f6;margin-bottom:0.35rem;">
+                <i class="fas fa-trash-alt" style="color:#ef4444;margin-right:6px;"></i>Delete Shortlink
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:1.25rem;">
+                Are you sure you want to delete the shortlink <strong>domain.com/${escapeHtml(slug)}</strong>? This action cannot be undone.
+            </div>
+            <div style="display:flex;gap:0.75rem;">
+                <button class="btn btn-danger" style="flex:1;background:var(--danger);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;" id="del-confirm-link">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+                <button class="btn btn-secondary" id="del-cancel-link" style="border:none;border-radius:8px;cursor:pointer;font-weight:600;">
+                    Cancel
+                </button>
+            </div>
+        </div>`;
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('#del-cancel-link').onclick = () => overlay.remove();
+    overlay.querySelector('#del-confirm-link').onclick = async () => {
+        config.shortlinks = config.shortlinks.filter(s => s.slug !== slug);
+        overlay.remove();
+        renderShortlinks();
+        await saveConfig();
+        showToast("Shortlink deleted", "success");
+    };
 }
